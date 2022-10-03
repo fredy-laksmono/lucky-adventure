@@ -137,3 +137,27 @@ class Orc extends Enemy {
     }
   }
 }
+
+class Boss extends Enemy {
+  constructor(name, equipments) {
+    super(
+      (name = name),
+      (health = 200),
+      (armor = 4),
+      (money = 0),
+      (equipments = equipments)
+    );
+    let modifier = getRandomInt(3);
+    if (modifier < 3) {
+    } else {
+      this.health = this.health * 1.3;
+    }
+    modifier = getRandomInt(3);
+    if (modifier < 2) {
+    } else if (modifier < 3) {
+      this.armor = 5;
+    } else {
+      this.armor = 6;
+    }
+  }
+}
