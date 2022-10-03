@@ -2,11 +2,28 @@ body {
     margin: 0;
 }
 
-#main-wrapper {
+#main-wrapper,#game-wrapper {
     display: grid;
     justify-content: center;
 }
 
 .center-frame {
     justify-content: center;
+}
+
+#game-wrapper{
+    grid-template-columns: 1fr 5fr 2fr 1fr;
+    grid-template-rows: 20px 100px 100px 75px;
+}
+
+#game-wrapper > div{
+    border:black 1px solid;
+}
+
+#status-bar-frame, #game-story-frame, #game-scenario-frame {
+    grid-column: 2/span 2;
+}
+
+#game-option-frame{
+    grid-column: 2;
 }
