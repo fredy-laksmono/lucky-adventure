@@ -113,3 +113,27 @@ class Goblin extends Enemy {
     }
   }
 }
+
+class Orc extends Enemy {
+  constructor(name, equipments) {
+    super(
+      (name = name),
+      (health = 70),
+      (armor = 2),
+      (money = 140),
+      (equipments = equipments)
+    );
+    let modifier = getRandomInt(2);
+    if (modifier < 2) {
+    } else {
+      this.health = this.health * 1.5;
+    }
+    modifier = getRandomInt(7);
+    if (modifier < 3) {
+    } else if (modifier < 6) {
+      this.armor = 3;
+    } else {
+      this.armomr = 4;
+    }
+  }
+}
