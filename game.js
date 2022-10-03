@@ -8,16 +8,7 @@ class Character {
     this.equipments = [];
     this.isDead = false;
   }
-  addEquipment(equipment) {
-    this.equipments.push(equipment);
-  }
-  removeEquipment(equipment) {
-    for (let i = 0; i < equipments.length; i++) {
-      if (this.equipments[i] === equipment) {
-        this.equipments.splice(i, 1);
-      }
-    }
-  }
+
   addHP(value) {
     const diffFromMax = this.maxHealth - this.health;
     if (diffFromMax <= value) {
@@ -26,10 +17,7 @@ class Character {
       this.health += value;
     }
   }
-  AddMaxHP(value) {
-    this.maxHealth += value;
-    this.health += value;
-  }
+
   reduceHP(value) {
     if (this.health <= value) {
       this.health = 0;
@@ -40,6 +28,28 @@ class Character {
   }
   addArmor(value) {
     this.armor += value;
+  }
+}
+
+class Player extends Character {
+  constructor(name) {
+    super((name = name));
+    this.health = 50;
+    this.maxHealth = 50;
+  }
+  AddMaxHP(value) {
+    this.maxHealth += value;
+    this.health += value;
+  }
+  addEquipment(equipment) {
+    this.equipments.push(equipment);
+  }
+  removeEquipment(equipment) {
+    for (let i = 0; i < equipments.length; i++) {
+      if (this.equipments[i] === equipment) {
+        this.equipments.splice(i, 1);
+      }
+    }
   }
   addMoney(value) {
     this.money += value;
