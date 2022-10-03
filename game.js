@@ -1,3 +1,7 @@
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max) + 1;
+}
+
 class Character {
   constructor(name) {
     this.name = name;
@@ -85,5 +89,27 @@ class Enemy extends Character {
   giveEquipment(player) {
     player.addEquipment(this.equipments[0]);
     this.equipments = [];
+  }
+}
+
+class Goblin extends Enemy {
+  constructor(name, equipments) {
+    super(
+      (name = name),
+      (health = 30),
+      (armor = 0),
+      (money = 75),
+      (equipments = equipments)
+    );
+    let modifier = getRandomInt(3);
+    if (modifier < 3) {
+    } else {
+      this.health = this.health * 1.5;
+    }
+    modifier = getRandomInt(4);
+    if (modifier < 4) {
+    } else {
+      this.armor = 1;
+    }
   }
 }
