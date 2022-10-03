@@ -5,12 +5,52 @@ const healthBar = document.querySelector("#hp-bar");
 const currentArmor = document.querySelector("#armor");
 const currentGold = document.querySelector("#gold");
 let option1 = document.querySelector("#option-1");
+let option2 = document.querySelector("#option-2");
 
 /***
  * Function
  */
 function getRandomInt(max) {
   return Math.floor(Math.random() * max) + 1;
+}
+
+class Equipment {
+  constructor(type, modifier) {
+    this.type = type;
+    this.modifier = modifier;
+    switch (type) {
+      case "sword":
+        this.damage = 10 * modifier;
+        break;
+      case "chain armor":
+        this.armor = 1 * modifier;
+        break;
+      case "shield":
+        this.armor = 1 * modifier;
+    }
+    this.isUsed = false;
+  }
+  appliedTo(character) {
+    if (this.type === "sword") {
+      if (this.isUsed) {
+      } else {
+        character.damage += this.damage;
+        this.isUsed = true;
+      }
+    } else if (this.type === "chain armor") {
+      if (this.isUsed) {
+      } else {
+        character.armor += this.armor;
+        this.isUsed = true;
+      }
+    } else if (this.type === "shield") {
+      if (this.isUsed) {
+      } else {
+        character.armor += this.armor;
+        this.isUsed = true;
+      }
+    }
+  }
 }
 
 class Character {
@@ -57,6 +97,8 @@ class Player extends Character {
     this.maxHealth = 50;
     this.armor = 4;
     this.damage = 20;
+    this.baseDamage = 20;
+    this.baseArmor = 4;
   }
   AddMaxHP(value) {
     this.maxHealth += value;
@@ -207,10 +249,21 @@ class Boss extends Enemy {
 
 const player1 = new Player("Player 1");
 const goblin1 = new Goblin("Goblin 1");
+const sword1 = new Equipment("sword", 1);
+player1.addEquipment(sword1);
 player1.updateStatus();
+
 option1.addEventListener("click", () => {
   console.log("clicked");
   player1.battle(goblin1);
   player1.updateStatus();
+  console.log("clicked");
+});
+
+option2.addEventListener("click", () => {
+  console.log("clicked");
+  player1.equipments[0].appliedTo(player1);
+  player1.updateStatus();
+  goblin1.battle(player1);
   console.log("clicked");
 });
