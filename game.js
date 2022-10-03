@@ -145,7 +145,6 @@ class Goblin extends Enemy {
   }
 
   battle(player) {
-    console.log(player);
     let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
     player.reduceHP(calculatedDamage);
   }
@@ -174,7 +173,8 @@ class Orc extends Enemy {
   }
 
   battle(player) {
-    player.reduceHP(this.damage);
+    let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
+    player.reduceHP(calculatedDamage);
   }
 }
 
@@ -200,7 +200,8 @@ class Boss extends Enemy {
     this.damage = 40;
   }
   battle(player) {
-    player.reduceHP(this.damage);
+    let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
+    player.reduceHP(calculatedDamage);
   }
 }
 
