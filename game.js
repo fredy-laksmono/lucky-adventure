@@ -66,3 +66,24 @@ class Player extends Character {
     this.health = this.maxHealth;
   }
 }
+
+class Enemy extends Character {
+  constructor(name, health, armor, money, equipments) {
+    super((name = name));
+    this.health = health;
+    this.maxHealth = health;
+    this.armor = armor;
+    this.money = money;
+    this.equipments = equipments;
+  }
+
+  giveMoney(player) {
+    player.addMoney(this.money);
+    this.money = 0;
+  }
+
+  giveEquipment(player) {
+    player.addEquipment(this.equipments[0]);
+    this.equipments = [];
+  }
+}
