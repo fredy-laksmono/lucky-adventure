@@ -27,3 +27,8 @@ body {
 #game-option-frame{
     grid-column: 2;
 }
+
+#status-bar-frame{
+    display: flex;
+    justify-content: space-evenly;
+}

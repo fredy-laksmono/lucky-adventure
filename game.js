@@ -1,3 +1,14 @@
+/***
+ * Global Variable
+ */
+const healthBar = document.querySelector("#hp-bar");
+const currentArmor = document.querySelector("#armor");
+const currentGold = document.querySelector("#gold");
+let option1 = document.querySelector("#option-1");
+
+/***
+ * Function
+ */
 function getRandomInt(max) {
   return Math.floor(Math.random() * max) + 1;
 }
@@ -40,6 +51,8 @@ class Player extends Character {
     super((name = name));
     this.health = 50;
     this.maxHealth = 50;
+    this.armor = 4;
+    this.damage = 20;
   }
   AddMaxHP(value) {
     this.maxHealth += value;
@@ -69,6 +82,19 @@ class Player extends Character {
   rest() {
     this.health = this.maxHealth;
   }
+  battle(enemy) {
+    console.log(enemy);
+    enemy.reduceHP(this.damage);
+    if (enemy.isDead) {
+    } else {
+      enemy.battle(this);
+    }
+  }
+  updateStatus() {
+    healthBar.innerText = this.health;
+    currentArmor.innerText = this.armor;
+    currentGold.innerText = this.money;
+  }
 }
 
 class Enemy extends Character {
@@ -79,6 +105,7 @@ class Enemy extends Character {
     this.armor = armor;
     this.money = money;
     this.equipments = equipments;
+    this.damage = 10;
   }
 
   giveMoney(player) {
@@ -94,13 +121,11 @@ class Enemy extends Character {
 
 class Goblin extends Enemy {
   constructor(name, equipments) {
-    super(
-      (name = name),
-      (health = 30),
-      (armor = 0),
-      (money = 75),
-      (equipments = equipments)
-    );
+    super(name);
+    this.health = 30;
+    this.armor = 0;
+    this.money = 75;
+    this.equipments = equipments;
     let modifier = getRandomInt(3);
     if (modifier < 3) {
     } else {
@@ -111,18 +136,21 @@ class Goblin extends Enemy {
     } else {
       this.armor = 1;
     }
+    this.damage = this.damage;
+  }
+
+  battle(player) {
+    player.reduceHP(this.damage);
   }
 }
 
 class Orc extends Enemy {
   constructor(name, equipments) {
-    super(
-      (name = name),
-      (health = 70),
-      (armor = 2),
-      (money = 140),
-      (equipments = equipments)
-    );
+    super(name);
+    this.health = 70;
+    this.armor = 2;
+    this.money = 140;
+    this.equipments = equipments;
     let modifier = getRandomInt(2);
     if (modifier < 2) {
     } else {
@@ -135,18 +163,21 @@ class Orc extends Enemy {
     } else {
       this.armomr = 4;
     }
+    this.damage = 20;
+  }
+
+  battle(player) {
+    player.reduceHP(this.damage);
   }
 }
 
 class Boss extends Enemy {
   constructor(name, equipments) {
-    super(
-      (name = name),
-      (health = 200),
-      (armor = 4),
-      (money = 0),
-      (equipments = equipments)
-    );
+    super(name);
+    this.health = 200;
+    this.armor = 4;
+    this.money = 0;
+    this.equipments = equipments;
     let modifier = getRandomInt(3);
     if (modifier < 3) {
     } else {
@@ -159,5 +190,19 @@ class Boss extends Enemy {
     } else {
       this.armor = 6;
     }
+    this.damage = 40;
+  }
+  battle(player) {
+    player.reduceHP(this.damage);
   }
 }
+
+const player1 = new Player("Player 1");
+const goblin1 = new Goblin("Goblin 1");
+player1.updateStatus();
+option1.addEventListener("click", () => {
+  console.log("clicked");
+  player1.battle(goblin1);
+  player1.updateStatus();
+  console.log("clicked");
+});
