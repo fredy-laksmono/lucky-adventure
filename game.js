@@ -19,6 +19,7 @@ class Character {
     this.health = 10;
     this.maxHealth = 10;
     this.armor = 0;
+    this.maxArmor = 9;
     this.money = 0;
     this.equipments = [];
     this.isDead = false;
@@ -43,6 +44,9 @@ class Character {
   }
   addArmor(value) {
     this.armor += value;
+    if (this.armor > 9) {
+      this.armor = 9;
+    }
   }
 }
 
@@ -84,7 +88,8 @@ class Player extends Character {
   }
   battle(enemy) {
     console.log(enemy);
-    enemy.reduceHP(this.damage);
+    let calculatedDamage = (1 - enemy.armor * 0.1) * this.damage;
+    enemy.reduceHP(calculatedDamage);
     if (enemy.isDead) {
     } else {
       enemy.battle(this);
@@ -140,7 +145,9 @@ class Goblin extends Enemy {
   }
 
   battle(player) {
-    player.reduceHP(this.damage);
+    console.log(player);
+    let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
+    player.reduceHP(calculatedDamage);
   }
 }
 
