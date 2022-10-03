@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+}
+
+#main-wrapper {
+    display: grid;
+    justify-content: center;
+}
+
+.center-frame {
+    justify-content: center;
+}
