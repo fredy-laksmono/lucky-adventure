@@ -20,7 +20,7 @@ body {
     border:black 1px solid;
 }
 
-#status-bar-frame, #game-story-frame, #game-scenario-frame {
+#status-bar-frame, #game-story-frame, #game-scenario-frame,#next-story {
     grid-column: 2/span 2;
 }
 

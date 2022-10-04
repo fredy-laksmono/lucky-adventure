@@ -4,8 +4,23 @@
 const healthBar = document.querySelector("#hp-bar");
 const currentArmor = document.querySelector("#armor");
 const currentGold = document.querySelector("#gold");
-let option1 = document.querySelector("#option-1");
-let option2 = document.querySelector("#option-2");
+const gameStory = document.querySelector("#game-story");
+const gameOption = document.querySelector("#game-option-frame");
+const gameWrapper = document.querySelector("#game-wrapper");
+// let option1 = document.querySelector("#option-1");
+// let option2 = document.querySelector("#option-2");
+// let option3 = document.querySelector("#option-3");
+// let option4 = document.querySelector("#option-4");
+// let option5 = document.querySelector("#option-5");
+let currentTarget;
+
+let encounter0 = [];
+let encounter1 = [];
+let encounter2 = [];
+let encounter3 = [];
+
+let currentChapter = 0;
+let currentPage = 0;
 
 /***
  * Function
@@ -88,11 +103,14 @@ class Character {
       this.armor = 9;
     }
   }
+  getName() {
+    return this.name;
+  }
 }
 
 class Player extends Character {
   constructor(name) {
-    super((name = name));
+    super(name);
     this.health = 50;
     this.maxHealth = 50;
     this.armor = 4;
@@ -247,23 +265,111 @@ class Boss extends Enemy {
   }
 }
 
-const player1 = new Player("Player 1");
-const goblin1 = new Goblin("Goblin 1");
-const sword1 = new Equipment("sword", 1);
-player1.addEquipment(sword1);
-player1.updateStatus();
+////////////////////////////////////////////////
+// Helper function to check for confirmation  //
+////////////////////////////////////////////////
+const reConfirm = (myAnswer, myString, sentence) => {
+  confirmResult = false;
+  confirmAnswer = `${sentence} ${myAnswer}?`;
+  confirmResult = confirm(confirmAnswer);
+  while (confirmResult === false) {
+    answer = prompt(myString); //To-do: Error handling
+    confirmAnswer = `${sentence} ${answer}?`;
+    confirmResult = confirm(confirmAnswer);
+  }
+  confirmResult = false;
+  return answer;
+  // end of confirm help function
+};
 
-option1.addEventListener("click", () => {
-  console.log("clicked");
-  player1.battle(goblin1);
-  player1.updateStatus();
-  console.log("clicked");
-});
+const displayStory = (chapter, page) => {
+  gameStory.innerText = gameNarator[chapter][page];
+};
 
-option2.addEventListener("click", () => {
-  console.log("clicked");
-  player1.equipments[0].appliedTo(player1);
-  player1.updateStatus();
-  goblin1.battle(player1);
-  console.log("clicked");
-});
+const attack = () => {
+  player.battle(currentTarget);
+};
+
+const storyProgress = () => {
+  if (currentChapter === 0) {
+    if (currentPage < gameNarator[currentChapter].length - 1) {
+      currentPage++;
+    } else {
+      currentPage = 0;
+      currentChapter++;
+      answer = prompt("Please enter your name: ");
+      answer = reConfirm(answer, "Please enter your name: ", "Is your name: ");
+      player.name = answer;
+      console.log(player.name);
+    }
+  } else if (currentChapter === 1) {
+    if (currentPage < gameNarator[currentChapter].length - 1) {
+      currentPage++;
+    } else {
+      gameWrapper.removeEventListener("click", storyProgress);
+      currentTarget = goblinInTraining1;
+      let option1 = document.createElement("button");
+      option1.innerText = "Attack";
+      option1.addEventListener("click", () => {
+        player.battle(goblinInTraining1);
+        if (goblinInTraining1.isDead) {
+          gameWrapper.addEventListener("click", storyProgress);
+          option1.remove();
+          currentPage = 0;
+          currentChapter++;
+        }
+      });
+      gameOption.appendChild(option1);
+    }
+  } else if (currentChapter === 2) {
+  }
+  displayStory(currentChapter, currentPage);
+};
+
+const startGame = () => {
+  displayStory(0, 0);
+  player.updateStatus();
+  gameWrapper.addEventListener("click", storyProgress);
+};
+
+const goblinInTraining1 = new Goblin("Hello");
+const goblinInTraining2 = new Goblin("World");
+goblinInTraining1.health = 20;
+goblinInTraining1.armor = 0;
+goblinInTraining2.health = 50;
+goblinInTraining2.armor = 0;
+let player = new Player("default");
+
+const gameNarator = {
+  0: [
+    "Voice: Greeting adventurer! Welcome to Lucky Adventura. We are glad that you can come, as we are in dire need of help. Here, this is your guide. ",
+    "Guide: Hello adventurer, I believe we have not been introduced to each other.",
+    "FL: I’m FL and may I know who is our brave soul name here?"
+  ],
+  1: [
+    `FL: Thank you ${player.name} for coming, as the voice in your head mentioned, we are in dire need for a brave adventure to help us defeat the dark lord in this world.`,
+    "FL: In order to reach the Dark lord, you need to venture into dark lord castle. I can guide you to the castle door. Let's go!",
+    "FL: There is a single goblin sleeping. We need to fight him in order to reach the castle. Quickly, click the Attack button!"
+  ],
+  2: [`FL: Nice Attack!`]
+};
+
+startGame();
+
+// const player1 = new Player("Player 1");
+// const goblin1 = new Goblin("Goblin 1");
+// const sword1 = new Equipment("sword", 1);
+// player1.addEquipment(sword1);
+// player1.updateStatus();
+
+// option1.addEventListener("click", () => {
+//   player1.battle(goblin1);
+//   player1.updateStatus();
+//   console.log("clicked");
+// });
+
+// option2.addEventListener("click", () => {
+//   player1.equipments[0].appliedTo(player1);
+//   player1.updateStatus();
+//   goblin1.battle(player1);
+// });
