@@ -113,7 +113,7 @@ class Player extends Character {
     super(name);
     this.health = 50;
     this.maxHealth = 50;
-    this.armor = 4;
+    this.armor = 0;
     this.damage = 20;
     this.baseDamage = 20;
     this.baseArmor = 4;
@@ -147,13 +147,15 @@ class Player extends Character {
     this.health = this.maxHealth;
   }
   battle(enemy) {
-    console.log(enemy);
+    console.log(`Before battle: `, enemy);
     let calculatedDamage = (1 - enemy.armor * 0.1) * this.damage;
     enemy.reduceHP(calculatedDamage);
     if (enemy.isDead) {
     } else {
+      console.log("Enemy counter attack");
       enemy.battle(this);
     }
+    console.log(`After battle: `, enemy);
   }
   updateStatus() {
     healthBar.innerText = this.health;
@@ -205,8 +207,11 @@ class Goblin extends Enemy {
   }
 
   battle(player) {
+    console.log("Goblin initiate attack");
     let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
     player.reduceHP(calculatedDamage);
+    console.log("Goblin attack for " + calculatedDamage);
+    player.updateStatus();
   }
 }
 
@@ -286,11 +291,17 @@ const displayStory = (chapter, page) => {
   gameStory.innerText = gameNarator[chapter][page];
 };
 
-const attack = () => {
-  player.battle(currentTarget);
+// Delete if not used
+// const attack = () => {
+//   player.battle(currentTarget);
+// };
+
+const continueStory = () => {
+  storyProgress();
 };
 
 const storyProgress = () => {
+  console.log("storyProgress triggered");
   if (currentChapter === 0) {
     if (currentPage < gameNarator[currentChapter].length - 1) {
       currentPage++;
@@ -300,6 +311,7 @@ const storyProgress = () => {
       answer = prompt("Please enter your name: ");
       answer = reConfirm(answer, "Please enter your name: ", "Is your name: ");
       player.name = answer;
+      player.updateStatus();
       console.log(player.name);
     }
   } else if (currentChapter === 1) {
@@ -313,22 +325,102 @@ const storyProgress = () => {
       option1.addEventListener("click", () => {
         player.battle(goblinInTraining1);
         if (goblinInTraining1.isDead) {
-          gameWrapper.addEventListener("click", storyProgress);
+          gameWrapper.addEventListener("click", continueStory);
           option1.remove();
+          console.log("Current Page before reset: " + currentPage);
           currentPage = 0;
           currentChapter++;
+          console.log(
+            "Current Chapter: " +
+              currentChapter +
+              " Current page: " +
+              currentPage
+          );
         }
       });
       gameOption.appendChild(option1);
     }
   } else if (currentChapter === 2) {
+    if (currentPage === 5) {
+      currentPage++;
+      player.addArmor(4);
+      player.updateStatus();
+    } else if (currentPage === 6) {
+      gameWrapper.removeEventListener("click", continueStory);
+      let option1 = document.createElement("button");
+      option1.innerText = "Basic Shield";
+      option1.addEventListener("click", () => {
+        player.addArmor(1);
+        player.updateStatus();
+        option1.remove();
+        gameWrapper.addEventListener("click", continueStory);
+        currentPage++;
+        goblinInTraining2.battle(player);
+        player.updateStatus();
+      });
+      gameOption.appendChild(option1);
+    } else if (currentPage === 8) {
+      gameWrapper.removeEventListener("click", continueStory);
+      let option1 = document.createElement("button");
+      option1.innerText = "Basic Sword";
+      option1.addEventListener("click", () => {
+        player.damage += 15;
+        player.updateStatus();
+        option1.remove();
+        gameWrapper.addEventListener("click", continueStory);
+        currentPage++;
+        goblinInTraining2.battle(player);
+        player.updateStatus();
+      });
+      gameOption.appendChild(option1);
+    } else if (currentPage === 9) {
+      gameWrapper.removeEventListener("click", continueStory);
+      currentTarget = goblinInTraining2;
+      let option1 = document.createElement("button");
+      option1.innerText = "Attack";
+      option1.addEventListener("click", () => {
+        player.battle(goblinInTraining2);
+        option1.remove();
+        if (goblinInTraining2.isDead) {
+          console.log("Current Page before reset: " + currentPage);
+          currentPage = 0;
+          currentChapter++;
+          console.log(
+            "Current Chapter: " +
+              currentChapter +
+              " Current page: " +
+              currentPage
+          );
+          displayStory(currentChapter, currentPage);
+          gameWrapper.addEventListener("click", continueStory);
+        } else {
+          continueStory();
+        }
+      });
+      gameOption.appendChild(option1);
+    } else if (currentPage < gameNarator[currentChapter].length - 1) {
+      currentPage++;
+    } else {
+    }
+  } else if (currentChapter === 3) {
+    if (currentPage === 1) {
+      currentPage++;
+      player.rest();
+    } else if (currentPage < gameNarator[currentChapter].length - 1) {
+      currentPage++;
+    }
   }
   displayStory(currentChapter, currentPage);
+  console.log(
+    "Story Progress - Current Chapter: " +
+      currentChapter +
+      " Current page: " +
+      currentPage
+  );
 };
 
 const startGame = () => {
   displayStory(0, 0);
-  player.updateStatus();
   gameWrapper.addEventListener("click", storyProgress);
 };
 
@@ -351,7 +443,26 @@ const gameNarator = {
     "FL: In order to reach the Dark lord, you need to venture into dark lord castle. I can guide you to the castle door. Let's go!",
     "FL: There is a single goblin sleeping. We need to fight him in order to reach the castle. Quickly, click the Attack button!"
   ],
-  2: [`FL: Nice Attack!`]
+  2: [
+    `FL: Nice Punch!`,
+    `FL: We are lucky that the goblin was not in a good shape. The next one won't be so easy`,
+    `FL: Talking about easy, we've arrived at the castle gate.`,
+    `FL: There is another goblin guarding the castle gate. This one seems tougher than before.`,
+    `FL: Unfortunately, I happened to shop some basic equipment a moment ago.`,
+    `FL: Here, wear this armor!`,
+    `FL: And take this basic shield and equip it. Click the shield button.`,
+    `FL: Your armor has increased and equipment can only be used one time per battle. But the effect last until the battle end.`,
+    `FL: Here, take this basic sword and let's equip the sword to increase our damage. Click the sword button.`,
+    `FL: As you can see, we already took 2 hit but it is barely reducing your health. Now keep attacking the goblin.`
+  ],
+  3: [
+    `FL: Nice, you beat the goblin. I know you can do it. `,
+    `FL: Now, let me heal you before you start your real journey.`,
+    `FL: Beyond this gate, you will face many challenges. You will be on your own.`,
+    `FL: You will find the dark lord at the top of the castle.`,
+    `FL: I sincerely wish you good luck.`,
+    `FL: System: You've entered the first floor of the castle.`
+  ]
 };
 
 startGame();
