@@ -105,7 +105,7 @@ class Character {
     } else {
       myArmor = this.armor;
     }
-    let calculatedDamage = (1 - armor * 0.1) * value;
+    let calculatedDamage = (1 - myArmor * 0.1) * value;
     if (this.health <= calculatedDamage) {
       this.health = 0;
       this.isDead = true;
