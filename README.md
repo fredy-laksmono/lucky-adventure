@@ -8,7 +8,7 @@ If you reach the end of story, you will face a dark lord which require correct p
 Good luck adventurer! You will need it.
 
 ## How to play
-Click play game on the home page.
+You can access the game at [here](http://fl-lucky-adventure.surge.sh/).
 Once you are in the game page, follow the instruction and you will learn how to play it.
 
 Summary of gameplay:
