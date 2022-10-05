@@ -99,11 +99,12 @@ class Character {
   }
 
   reduceHP(value) {
-    if (this.health <= value) {
+    let calculatedDamage = (1 - this.armor * 0.1) * value;
+    if (this.health <= calculatedDamage) {
       this.health = 0;
       this.isDead = true;
     } else {
-      this.health -= value;
+      this.health -= calculatedDamage;
     }
   }
   addArmor(value) {
@@ -157,8 +158,7 @@ class Player extends Character {
   }
   battle(enemy) {
     console.log(`Before battle: `, enemy);
-    let calculatedDamage = (1 - enemy.armor * 0.1) * this.damage;
-    enemy.reduceHP(calculatedDamage);
+    enemy.reduceHP(this.damage);
     if (enemy.isDead) {
     } else {
       console.log("Enemy counter attack");
@@ -218,9 +218,8 @@ class Goblin extends Enemy {
 
   battle(player) {
     console.log("Goblin initiate attack");
-    let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
-    player.reduceHP(calculatedDamage);
-    console.log("Goblin attack for " + calculatedDamage);
+    player.reduceHP(this.damage);
+    console.log("Goblin attack for " + this.damage);
     player.updateStatus();
   }
 }
@@ -248,8 +247,7 @@ class Orc extends Enemy {
   }
 
   battle(player) {
-    let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
-    player.reduceHP(calculatedDamage);
+    player.reduceHP(this.damage);
   }
 }
 
@@ -275,8 +273,7 @@ class Boss extends Enemy {
     this.damage = 40;
   }
   battle(player) {
-    let calculatedDamage = (1 - player.armor * 0.1) * this.damage;
-    player.reduceHP(calculatedDamage);
+    player.reduceHP(this.damage);
   }
 }
 
@@ -313,6 +310,7 @@ const displayScenario = (type, object) => {
     const armorValue = document.createElement("div");
     nameFrame.classList.add("name-frame");
     myDiv.classList.add("scenario-wraper-enemy");
+    myDiv.classList.add("scenario-div");
     nameFrame.innerText = `${object.name}`;
     healthFrame.innerText = `HP: ${object.health}`;
     armorFrame.innerText = `Armor: ${object.armor}`;
@@ -370,6 +368,7 @@ const displayScenario = (type, object) => {
     console.log("Treasure triggered");
     const myDiv = document.createElement("div");
     const myInstruction = document.createElement("div");
+    myDiv.classList.add("scenario-div");
     myInstruction.innerText = "You got new equipment";
     myInstruction.classList.add("name-frame");
     gameScenario.appendChild(myDiv);
@@ -664,5 +663,5 @@ const gameNarator = {
   level1: [`Level 1`]
 };
 
-//startGame();
-mainStory();
+startGame();
+//mainStory();
