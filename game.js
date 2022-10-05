@@ -301,13 +301,17 @@ const displayScenario = (type, object) => {
   if (type === "enemy" && currentDisplayActive === false) {
     console.log("New Display");
     const myDiv = document.createElement("div");
+    const nameFrame = document.createElement("div");
     const healthFrame = document.createElement("div");
     const healthValue = document.createElement("div");
     const armorFrame = document.createElement("div");
     const armorValue = document.createElement("div");
-    myDiv.classList.add("scenarioWraperEnemy");
+    nameFrame.classList.add("name-frame");
+    myDiv.classList.add("scenario-wraper-enemy");
+    nameFrame.innerText = `${object.name}`;
     healthFrame.innerText = `HP: ${object.health}`;
     armorFrame.innerText = `Armor: ${object.armor}`;
+    myDiv.appendChild(nameFrame);
     myDiv.appendChild(healthFrame);
     myDiv.appendChild(armorFrame);
     gameScenario.appendChild(myDiv);
@@ -494,8 +498,8 @@ const startGame = () => {
   gameWrapper.addEventListener("click", storyProgress);
 };
 
-const goblinInTraining1 = new Goblin("Hello");
-const goblinInTraining2 = new Goblin("World");
+const goblinInTraining1 = new Goblin("Hello Goblin");
+const goblinInTraining2 = new Goblin("World Goblin");
 goblinInTraining1.health = 20;
 goblinInTraining1.armor = 0;
 goblinInTraining2.health = 50;

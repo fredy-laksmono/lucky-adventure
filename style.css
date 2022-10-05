@@ -33,7 +33,11 @@ body {
     justify-content: space-evenly;
 }
 
-.scenarioWraperEnemy{
+.scenario-wraper-enemy{
     display: grid;
     grid-template-columns: 1fr 1fr 5fr;
+}
+
+.name-frame{
+    grid-column: 1/4;
 }
