@@ -168,6 +168,7 @@ class Player extends Character {
   }
   rest() {
     this.health = this.maxHealth;
+    this.armor = this.baseArmor;
   }
   battle(enemy) {
     console.log(`Before battle: `, enemy);
