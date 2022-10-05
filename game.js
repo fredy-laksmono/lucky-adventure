@@ -27,6 +27,10 @@ let currentChapter = 0;
 let currentPage = 0;
 let currentDisplayActive = false;
 
+let currentEncounter = [];
+let currentEncounterOption = [];
+let currentLevel = 1;
+
 /***
  * Function
  */
@@ -178,6 +182,7 @@ class Enemy extends Character {
     this.money = money;
     this.equipments = equipments;
     this.damage = 10;
+    this.type = "enemy";
   }
 
   giveMoney(player) {
@@ -321,9 +326,80 @@ const displayScenario = (type, object) => {
       armorData: armorFrame,
       enemy: object
     };
+  } else if (type === "path" && currentDisplayActive === false) {
+    console.log("New Display");
+    const myDiv = document.createElement("div");
+    const myInstruction = document.createElement("div");
+    myInstruction.innerText = "<Select your path>";
+    myInstruction.classList.add("name-frame");
+    myDiv.classList.add("scenario-wraper-enemy");
+    myDiv.classList.add("scenario-div");
+    myDiv.appendChild(myInstruction);
+    for (let i = 0; i < object.length; i++) {
+      const myOption = document.createElement("button");
+      myOption.innerText = object[i].name;
+      if (object[i].type === "enemy") {
+        myOption.addEventListener("click", () => {
+          currentTarget = object[i];
+          clearScenario();
+          currentScenario = displayScenario("enemy", object[i]);
+        });
+      } else if (object[i].type === "rest") {
+        myOption.addEventListener("click", (e) => {
+          e.stopPropagation();
+          clearScenario();
+          currentScenario = displayScenario("rest", object[i]);
+        });
+      } else if (object[i].type === "treasure") {
+        myOption.addEventListener("click", () => {
+          clearScenario();
+          currentScenario = displayScenario("treasure", object[i]);
+        });
+      }
+
+      myDiv.appendChild(myOption);
+    }
+    gameScenario.appendChild(myDiv);
+    return {
+      master: myDiv,
+      enemy: object
+    };
+  } else if (type === "rest") {
+    restScenario();
+  } else if (type === "treasure") {
+    console.log("Treasure triggered");
+    const myDiv = document.createElement("div");
+    const myInstruction = document.createElement("div");
+    myInstruction.innerText = "You got new equipment";
+    myInstruction.classList.add("name-frame");
+    gameScenario.appendChild(myDiv);
+    player.updateStatus();
   }
 };
 
+const clearAndContinue = () => {
+  clearScenario();
+  gameWrapper.removeEventListener("click", clearAndContinue);
+  gameWrapper.addEventListener("click", advance);
+};
+
+const restScenario = () => {
+  console.log("In-Rest Scenario");
+  const myDiv = document.createElement("div");
+  const myInstruction = document.createElement("div");
+  myDiv.classList.add("scenario-div");
+  myInstruction.innerText = "You are well rested";
+  myInstruction.classList.add("name-frame");
+  myDiv.appendChild(myInstruction);
+  gameScenario.appendChild(myDiv);
+  player.rest();
+  player.updateStatus();
+  gameWrapper.addEventListener("click", clearAndContinue);
+  currentScenario = { master: myDiv };
+  return {
+    master: myDiv
+  };
+};
 const updateEnemy = () => {
   let myHealth = currentScenario.healthData;
   let myArmor = currentScenario.armorData;
@@ -332,7 +408,9 @@ const updateEnemy = () => {
 };
 
 const clearScenario = () => {
-  currentScenario.master.remove();
+  const myDiv = document.querySelector(".scenario-div");
+  myDiv.remove();
+  //currentScenario.master.remove();
   currentDisplayActive = false;
 };
 // Delete if not used
@@ -348,6 +426,50 @@ const delayNext = () => {
   isStoryEnabled = true;
   currentPage++;
   isDelayEnabled = true;
+};
+
+const generateEncounter = (level) => {
+  if (level === 1) {
+    for (let i = 0; i < 6; i++) {
+      myRand = getRandomInt(6);
+      if (myRand >= 5) {
+        const rest = {
+          type: "rest",
+          name: "Rest"
+        };
+        currentEncounter.push(rest);
+      } else if (myRand === 4) {
+        const sword = new Equipment("sword", 2);
+        const treasureBox = {
+          type: "treasure",
+          name: "Treasure Box",
+          item: sword
+        };
+        currentEncounter.push(treasureBox);
+      } else if (myRand < 4) {
+        let enemyName = "Goblin" + i;
+        const goblin = new Goblin(enemyName);
+        currentEncounter.push(goblin);
+      }
+    }
+  }
+};
+
+const advance = () => {
+  currentEncounterOption = [];
+  gameWrapper.removeEventListener("click", advance);
+  currentEncounterOption.push(currentEncounter.pop());
+  currentEncounterOption.push(currentEncounter.pop());
+  console.log("Scenario to be shown: ", currentEncounterOption);
+  currentScenario = displayScenario("path", currentEncounterOption);
+};
+
+const mainStory = () => {
+  console.log(currentEncounter);
+  generateEncounter(1);
+  displayStory("level1", 0);
+  console.log(currentEncounter);
+  gameWrapper.addEventListener("click", advance);
 };
 
 const storyProgress = () => {
@@ -538,25 +660,9 @@ const gameNarator = {
     `FL: You will find the dark lord at the top of the castle.`,
     `FL: I sincerely wish you good luck.`,
     `FL: System: You've entered the first floor of the castle.`
-  ]
+  ],
+  level1: [`Level 1`]
 };
 
-startGame();
-
-// const player1 = new Player("Player 1");
-// const goblin1 = new Goblin("Goblin 1");
-// const sword1 = new Equipment("sword", 1);
-// player1.addEquipment(sword1);
-// player1.updateStatus();
-
-// option1.addEventListener("click", () => {
-//   player1.battle(goblin1);
-//   player1.updateStatus();
-//   console.log("clicked");
-// });
-
-// option2.addEventListener("click", () => {
-//   player1.equipments[0].appliedTo(player1);
-//   player1.updateStatus();
-//   goblin1.battle(player1);
-// });
+//startGame();
+mainStory();
