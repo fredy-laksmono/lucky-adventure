@@ -99,7 +99,13 @@ class Character {
   }
 
   reduceHP(value) {
-    let calculatedDamage = (1 - this.armor * 0.1) * value;
+    let myArmor = 0;
+    if (this.armor > 9) {
+      myArmor = 9;
+    } else {
+      myArmor = this.armor;
+    }
+    let calculatedDamage = (1 - armor * 0.1) * value;
     if (this.health <= calculatedDamage) {
       this.health = 0;
       this.isDead = true;
