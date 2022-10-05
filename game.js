@@ -105,12 +105,19 @@ class Character {
       this.isDead = true;
     } else {
       this.health -= calculatedDamage;
+      this.reduceArmor();
     }
   }
   addArmor(value) {
     this.armor += value;
     if (this.armor > 9) {
       this.armor = 9;
+    }
+  }
+  reduceArmor() {
+    this.armor--;
+    if (this.armor < 1) {
+      this.armor = 0;
     }
   }
   getName() {
@@ -437,15 +444,17 @@ const generateEncounter = (level) => {
           name: "Rest"
         };
         currentEncounter.push(rest);
-      } else if (myRand === 4) {
-        const sword = new Equipment("sword", 2);
-        const treasureBox = {
-          type: "treasure",
-          name: "Treasure Box",
-          item: sword
-        };
-        currentEncounter.push(treasureBox);
-      } else if (myRand < 4) {
+      }
+      // else if (myRand === 4) {
+      //   const sword = new Equipment("sword", 2);
+      //   const treasureBox = {
+      //     type: "treasure",
+      //     name: "Treasure Box",
+      //     item: sword
+      //   };
+      //   currentEncounter.push(treasureBox);
+      // }
+      else if (myRand < 5) {
         let enemyName = "Goblin" + i;
         const goblin = new Goblin(enemyName);
         currentEncounter.push(goblin);
@@ -533,7 +542,7 @@ const storyProgress = () => {
       let option1 = document.createElement("button");
       option1.innerText = "Basic Shield";
       option1.addEventListener("click", () => {
-        player.addArmor(1);
+        player.addArmor(3);
         player.updateStatus();
         option1.remove();
         gameWrapper.addEventListener("click", continueStory);
