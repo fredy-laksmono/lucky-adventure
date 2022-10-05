@@ -7,12 +7,16 @@ const currentGold = document.querySelector("#gold");
 const gameStory = document.querySelector("#game-story");
 const gameOption = document.querySelector("#game-option-frame");
 const gameWrapper = document.querySelector("#game-wrapper");
+const gameScenario = document.querySelector("#game-scenario");
 // let option1 = document.querySelector("#option-1");
 // let option2 = document.querySelector("#option-2");
 // let option3 = document.querySelector("#option-3");
 // let option4 = document.querySelector("#option-4");
 // let option5 = document.querySelector("#option-5");
 let currentTarget;
+let currentScenario;
+let isStoryEnabled = true;
+let isDelayEnabled = false;
 
 let encounter0 = [];
 let encounter1 = [];
@@ -21,6 +25,7 @@ let encounter3 = [];
 
 let currentChapter = 0;
 let currentPage = 0;
+let currentDisplayActive = false;
 
 /***
  * Function
@@ -291,6 +296,41 @@ const displayStory = (chapter, page) => {
   gameStory.innerText = gameNarator[chapter][page];
 };
 
+const displayScenario = (type, object) => {
+  console.log("displayScenario Triggered");
+  if (type === "enemy" && currentDisplayActive === false) {
+    console.log("New Display");
+    const myDiv = document.createElement("div");
+    const healthFrame = document.createElement("div");
+    const healthValue = document.createElement("div");
+    const armorFrame = document.createElement("div");
+    const armorValue = document.createElement("div");
+    myDiv.classList.add("scenarioWraperEnemy");
+    healthFrame.innerText = `HP: ${object.health}`;
+    armorFrame.innerText = `Armor: ${object.armor}`;
+    myDiv.appendChild(healthFrame);
+    myDiv.appendChild(armorFrame);
+    gameScenario.appendChild(myDiv);
+    return {
+      master: myDiv,
+      healthData: healthFrame,
+      armorData: armorFrame,
+      enemy: object
+    };
+  }
+};
+
+const updateEnemy = () => {
+  let myHealth = currentScenario.healthData;
+  let myArmor = currentScenario.armorData;
+  myHealth.innerText = `HP: ${currentScenario.enemy.health}`;
+  myArmor.innerText = `Armor: ${currentScenario.enemy.armor}`;
+};
+
+const clearScenario = () => {
+  currentScenario.master.remove();
+  currentDisplayActive = false;
+};
 // Delete if not used
 // const attack = () => {
 //   player.battle(currentTarget);
@@ -300,13 +340,20 @@ const continueStory = () => {
   storyProgress();
 };
 
+const delayNext = () => {
+  isStoryEnabled = true;
+  currentPage++;
+  isDelayEnabled = true;
+};
+
 const storyProgress = () => {
   console.log("storyProgress triggered");
+  displayStory(currentChapter, currentPage);
   if (currentChapter === 0) {
     if (currentPage < gameNarator[currentChapter].length - 1) {
-      currentPage++;
+      //   currentPage++;
     } else {
-      currentPage = 0;
+      currentPage = -1;
       currentChapter++;
       answer = prompt("Please enter your name: ");
       answer = reConfirm(answer, "Please enter your name: ", "Is your name: ");
@@ -316,16 +363,21 @@ const storyProgress = () => {
     }
   } else if (currentChapter === 1) {
     if (currentPage < gameNarator[currentChapter].length - 1) {
-      currentPage++;
+      //   currentPage++;
     } else {
       gameWrapper.removeEventListener("click", storyProgress);
+      isStoryEnabled = false;
       currentTarget = goblinInTraining1;
+      currentScenario = displayScenario("enemy", goblinInTraining1);
+      console.log("currentScenario = ", currentScenario);
       let option1 = document.createElement("button");
       option1.innerText = "Attack";
       option1.addEventListener("click", () => {
         player.battle(goblinInTraining1);
+        updateEnemy();
         if (goblinInTraining1.isDead) {
           gameWrapper.addEventListener("click", continueStory);
+          isStoryEnabled = true;
           option1.remove();
           console.log("Current Page before reset: " + currentPage);
           currentPage = 0;
@@ -341,12 +393,18 @@ const storyProgress = () => {
       gameOption.appendChild(option1);
     }
   } else if (currentChapter === 2) {
-    if (currentPage === 5) {
-      currentPage++;
+    if (currentPage === 2) {
+      clearScenario();
+      //   currentPage++;
+    } else if (currentPage === 6) {
+      //   currentPage++;
       player.addArmor(4);
       player.updateStatus();
-    } else if (currentPage === 6) {
+    } else if (currentPage === 7) {
       gameWrapper.removeEventListener("click", continueStory);
+      isStoryEnabled = false;
+      currentTarget = goblinInTraining2;
+      currentScenario = displayScenario("enemy", goblinInTraining2);
       let option1 = document.createElement("button");
       option1.innerText = "Basic Shield";
       option1.addEventListener("click", () => {
@@ -354,13 +412,14 @@ const storyProgress = () => {
         player.updateStatus();
         option1.remove();
         gameWrapper.addEventListener("click", continueStory);
-        currentPage++;
+        delayNext();
         goblinInTraining2.battle(player);
         player.updateStatus();
       });
       gameOption.appendChild(option1);
-    } else if (currentPage === 8) {
+    } else if (currentPage === 9) {
       gameWrapper.removeEventListener("click", continueStory);
+      isStoryEnabled = false;
       let option1 = document.createElement("button");
       option1.innerText = "Basic Sword";
       option1.addEventListener("click", () => {
@@ -368,18 +427,20 @@ const storyProgress = () => {
         player.updateStatus();
         option1.remove();
         gameWrapper.addEventListener("click", continueStory);
-        currentPage++;
+        delayNext();
         goblinInTraining2.battle(player);
         player.updateStatus();
       });
       gameOption.appendChild(option1);
-    } else if (currentPage === 9) {
+    } else if (currentPage === 10) {
       gameWrapper.removeEventListener("click", continueStory);
+      isStoryEnabled = false;
       currentTarget = goblinInTraining2;
       let option1 = document.createElement("button");
       option1.innerText = "Attack";
       option1.addEventListener("click", () => {
         player.battle(goblinInTraining2);
+        updateEnemy();
         option1.remove();
         if (goblinInTraining2.isDead) {
           console.log("Current Page before reset: " + currentPage);
@@ -393,22 +454,30 @@ const storyProgress = () => {
           );
           displayStory(currentChapter, currentPage);
           gameWrapper.addEventListener("click", continueStory);
+          isStoryEnabled = true;
         } else {
           continueStory();
         }
       });
       gameOption.appendChild(option1);
     } else if (currentPage < gameNarator[currentChapter].length - 1) {
-      currentPage++;
+      //   currentPage++;
     } else {
     }
   } else if (currentChapter === 3) {
-    if (currentPage === 1) {
-      currentPage++;
+    if (currentPage === 2) {
+      //   currentPage++;
+      clearScenario();
       player.rest();
     } else if (currentPage < gameNarator[currentChapter].length - 1) {
-      currentPage++;
+      // currentPage++;
     }
+  }
+  if (isStoryEnabled && isDelayEnabled === false) {
+    currentPage++;
+    console.log("Story increase by one, " + currentPage);
+  } else if (isStoryEnabled && isDelayEnabled) {
+    isDelayEnabled = false;
   }
   displayStory(currentChapter, currentPage);
   console.log(
@@ -417,6 +486,7 @@ const storyProgress = () => {
       " Current page: " +
       currentPage
   );
+  player.updateStatus();
 };
 
 const startGame = () => {
@@ -444,6 +514,7 @@ const gameNarator = {
     "FL: There is a single goblin sleeping. We need to fight him in order to reach the castle. Quickly, click the Attack button!"
   ],
   2: [
+    ``,
     `FL: Nice Punch!`,
     `FL: We are lucky that the goblin was not in a good shape. The next one won't be so easy`,
     `FL: Talking about easy, we've arrived at the castle gate.`,
@@ -456,6 +527,7 @@ const gameNarator = {
     `FL: As you can see, we already took 2 hit but it is barely reducing your health. Now keep attacking the goblin.`
   ],
   3: [
+    ``,
     `FL: Nice, you beat the goblin. I know you can do it. `,
     `FL: Now, let me heal you before you start your real journey.`,
     `FL: Beyond this gate, you will face many challenges. You will be on your own.`,
