@@ -180,12 +180,14 @@ class Player extends Character {
   battle(enemy) {
     console.log(`Before battle: `, enemy);
     enemy.reduceHP(this.damage);
-    if (enemy.isDead) {
-    } else {
-      console.log("Enemy counter attack");
-      enemy.battle(this);
+    if (isTutorial) {
+      if (enemy.isDead) {
+      } else {
+        console.log("Enemy counter attack");
+        enemy.battle(this);
+      }
+      console.log(`After battle: `, enemy);
     }
-    console.log(`After battle: `, enemy);
   }
   updateStatus() {
     healthBar.innerText = this.health;
@@ -321,6 +323,7 @@ const displayStory = (chapter, page) => {
 };
 
 const deadScenario = () => {
+  currentLevel = 1;
   clearScenario();
   let myBattleOptions = document.querySelectorAll(".battle-option");
   myBattleOptions.forEach((element) => {
@@ -436,6 +439,12 @@ const displayScenario = (type, object) => {
           clearScenario();
           currentScenario = displayScenario("treasure", object[i]);
         });
+      } else if (object[i].type === "level up") {
+        myOption.addEventListener("click", (e) => {
+          clearScenario();
+          currentScenario = displayScenario("level up", object[i]);
+          e.stopPropagation;
+        });
       }
 
       myDiv.appendChild(myOption);
@@ -456,13 +465,34 @@ const displayScenario = (type, object) => {
     myInstruction.classList.add("name-frame");
     gameScenario.appendChild(myDiv);
     player.updateStatus();
+  } else if (type === "level up") {
+    levelUpScenario();
   }
 };
 
 const clearAndContinue = () => {
+  console.log("clearing scenario in clear and continue");
   clearScenario();
   gameWrapper.removeEventListener("click", clearAndContinue);
   gameWrapper.addEventListener("click", advance);
+};
+
+const levelUpScenario = () => {
+  console.log("In-LevelUp Scenario");
+  const myDiv = document.createElement("div");
+  const myInstruction = document.createElement("div");
+  myDiv.classList.add("scenario-div");
+  myInstruction.innerText = "You climb up to the next level.";
+  myInstruction.classList.add("name-frame");
+  myDiv.appendChild(myInstruction);
+  gameScenario.appendChild(myDiv);
+  player.updateStatus();
+  gameWrapper.addEventListener("click", clearAndContinue);
+  gameStory.innerText = "Level " + currentLevel;
+  currentScenario = { master: myDiv };
+  return {
+    master: myDiv
+  };
 };
 
 const restScenario = () => {
@@ -538,12 +568,51 @@ const generateEncounter = (level) => {
         currentEncounter.push(goblin);
       }
     }
+  } else if (level === 2) {
+    for (let i = 0; i < 10; i++) {
+      myRand = getRandomInt(7);
+      if (myRand >= 6) {
+        const rest = {
+          type: "rest",
+          name: "Rest"
+        };
+        currentEncounter.push(rest);
+      }
+      // else if (myRand === 4) {
+      //   const sword = new Equipment("sword", 2);
+      //   const treasureBox = {
+      //     type: "treasure",
+      //     name: "Treasure Box",
+      //     item: sword
+      //   };
+      //   currentEncounter.push(treasureBox);
+      // }
+      else if (myRand < 6) {
+        let enemyName = "Goblin" + i;
+        const goblin = new Goblin(enemyName);
+        currentEncounter.push(goblin);
+      }
+    }
+    const levelUp = {
+      type: "level up",
+      name: "Go up next level"
+    };
+    currentEncounter.push(levelUp);
+    currentEncounter.push(levelUp);
   }
 };
 
 const advance = () => {
   currentEncounterOption = [];
   gameWrapper.removeEventListener("click", advance);
+  if (currentEncounter.length === 0) {
+    currentLevel++;
+    generateEncounter(currentLevel);
+    player.AddMaxHP(50);
+    player.addMoney(50 * currentLevel);
+    player.rest();
+    player.updateStatus;
+  }
   currentEncounterOption.push(currentEncounter.pop());
   currentEncounterOption.push(currentEncounter.pop());
   console.log("Scenario to be shown: ", currentEncounterOption);
