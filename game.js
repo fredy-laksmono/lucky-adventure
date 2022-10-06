@@ -17,6 +17,8 @@ let currentTarget;
 let currentScenario;
 let isStoryEnabled = true;
 let isDelayEnabled = false;
+let isTutorial = true;
+let answer;
 
 let encounter0 = [];
 let encounter1 = [];
@@ -113,12 +115,14 @@ class Character {
       this.health -= calculatedDamage;
       this.reduceArmor();
     }
+    if (this.type === "enemy") {
+      updateEnemy(this);
+    } else if (this.type === "player") {
+      this.updateStatus();
+    }
   }
   addArmor(value) {
     this.armor += value;
-    if (this.armor > 9) {
-      this.armor = 9;
-    }
   }
   reduceArmor() {
     this.armor--;
@@ -140,6 +144,7 @@ class Player extends Character {
     this.damage = 20;
     this.baseDamage = 20;
     this.baseArmor = 4;
+    this.type = "player";
   }
   AddMaxHP(value) {
     this.maxHealth += value;
@@ -168,7 +173,9 @@ class Player extends Character {
   }
   rest() {
     this.health = this.maxHealth;
-    this.armor = this.baseArmor;
+    if (this.armor < this.baseArmor) {
+      this.armor = this.baseArmor;
+    }
   }
   battle(enemy) {
     console.log(`Before battle: `, enemy);
@@ -202,6 +209,7 @@ class Enemy extends Character {
   giveMoney(player) {
     player.addMoney(this.money);
     this.money = 0;
+    player.updateStatus();
   }
 
   giveEquipment(player) {
@@ -312,6 +320,63 @@ const displayStory = (chapter, page) => {
   gameStory.innerText = gameNarator[chapter][page];
 };
 
+const deadScenario = () => {
+  clearScenario();
+  let myBattleOptions = document.querySelectorAll(".battle-option");
+  myBattleOptions.forEach((element) => {
+    element.remove();
+  });
+  gameStory.innerText = "You've dead";
+  let option1 = document.createElement("button");
+  option1.classList.add("battle-option");
+  option1.innerText = "Retry";
+  option1.addEventListener("click", (e) => {
+    mainStory();
+    e.stopPropagation();
+  });
+  gameOption.appendChild(option1);
+};
+
+const enableBattle = (enemy) => {
+  let option1 = document.createElement("button");
+  option1.classList.add("battle-option");
+  option1.innerText = "Attack";
+  option1.addEventListener("click", (e) => {
+    player.updateStatus();
+    player.battle(enemy);
+    if (enemy.isDead) {
+      enemy.giveMoney(player);
+      disableBattle();
+    } else {
+      enemy.battle(player);
+      player.updateStatus();
+      if (player.isDead) {
+        deadScenario();
+      }
+    }
+    e.stopPropagation();
+  });
+  gameOption.appendChild(option1);
+  let option2 = document.createElement("button");
+  option2.classList.add("battle-option");
+  option2.innerText = "Shield Up";
+  option2.addEventListener("click", () => {
+    player.addArmor(3);
+    player.updateStatus();
+    enemy.battle(player);
+    player.updateStatus();
+  });
+  gameOption.appendChild(option2);
+};
+
+const disableBattle = () => {
+  let myBattleOptions = document.querySelectorAll(".battle-option");
+  myBattleOptions.forEach((element) => {
+    element.remove();
+  });
+  gameWrapper.addEventListener("click", clearAndContinue);
+};
+
 const displayScenario = (type, object) => {
   console.log("displayScenario Triggered");
   if (type === "enemy" && currentDisplayActive === false) {
@@ -319,10 +384,10 @@ const displayScenario = (type, object) => {
     const myDiv = document.createElement("div");
     const nameFrame = document.createElement("div");
     const healthFrame = document.createElement("div");
-    const healthValue = document.createElement("div");
     const armorFrame = document.createElement("div");
-    const armorValue = document.createElement("div");
     nameFrame.classList.add("name-frame");
+    healthFrame.classList.add("health-frame");
+    armorFrame.classList.add("armor-frame");
     myDiv.classList.add("scenario-wraper-enemy");
     myDiv.classList.add("scenario-div");
     nameFrame.innerText = `${object.name}`;
@@ -332,6 +397,10 @@ const displayScenario = (type, object) => {
     myDiv.appendChild(healthFrame);
     myDiv.appendChild(armorFrame);
     gameScenario.appendChild(myDiv);
+    if (isTutorial) {
+    } else {
+      enableBattle(object);
+    }
     return {
       master: myDiv,
       healthData: healthFrame,
@@ -413,11 +482,13 @@ const restScenario = () => {
     master: myDiv
   };
 };
-const updateEnemy = () => {
-  let myHealth = currentScenario.healthData;
-  let myArmor = currentScenario.armorData;
-  myHealth.innerText = `HP: ${currentScenario.enemy.health}`;
-  myArmor.innerText = `Armor: ${currentScenario.enemy.armor}`;
+const updateEnemy = (enemy) => {
+  // let myHealth = currentScenario.healthData;
+  // let myArmor = currentScenario.armorData;
+  let myHealth = document.querySelector(".health-frame");
+  let myArmor = document.querySelector(".armor-frame");
+  myHealth.innerText = `HP: ${enemy.health}`;
+  myArmor.innerText = `Armor: ${enemy.armor}`;
 };
 
 const clearScenario = () => {
@@ -481,6 +552,8 @@ const advance = () => {
 
 const mainStory = () => {
   console.log(currentEncounter);
+  player.rest();
+  player.updateStatus();
   generateEncounter(1);
   displayStory("level1", 0);
   console.log(currentEncounter);
@@ -501,8 +574,15 @@ const storyProgress = () => {
       player.name = answer;
       player.updateStatus();
       console.log(player.name);
+      answer = prompt("Skip tutorial? (Yes/No)");
+      if (answer == "Yes") {
+        isTutorial = false;
+        gameWrapper.removeEventListener("click", storyProgress);
+        gameStory.innerText = "";
+        mainStory();
+      }
     }
-  } else if (currentChapter === 1) {
+  } else if (currentChapter === 1 && isTutorial) {
     if (currentPage < gameNarator[currentChapter].length - 1) {
       //   currentPage++;
     } else {
@@ -515,7 +595,7 @@ const storyProgress = () => {
       option1.innerText = "Attack";
       option1.addEventListener("click", () => {
         player.battle(goblinInTraining1);
-        updateEnemy();
+        updateEnemy(goblinInTraining1);
         if (goblinInTraining1.isDead) {
           gameWrapper.addEventListener("click", continueStory);
           isStoryEnabled = true;
@@ -533,7 +613,7 @@ const storyProgress = () => {
       });
       gameOption.appendChild(option1);
     }
-  } else if (currentChapter === 2) {
+  } else if (currentChapter === 2 && isTutorial) {
     if (currentPage === 2) {
       clearScenario();
       //   currentPage++;
@@ -581,7 +661,7 @@ const storyProgress = () => {
       option1.innerText = "Attack";
       option1.addEventListener("click", () => {
         player.battle(goblinInTraining2);
-        updateEnemy();
+        updateEnemy(goblinInTraining2);
         option1.remove();
         if (goblinInTraining2.isDead) {
           console.log("Current Page before reset: " + currentPage);
@@ -605,13 +685,15 @@ const storyProgress = () => {
       //   currentPage++;
     } else {
     }
-  } else if (currentChapter === 3) {
+  } else if (currentChapter === 3 && isTutorial) {
     if (currentPage === 2) {
       //   currentPage++;
       clearScenario();
       player.rest();
     } else if (currentPage < gameNarator[currentChapter].length - 1) {
       // currentPage++;
+    } else {
+      isTutorial = false;
     }
   }
   if (isStoryEnabled && isDelayEnabled === false) {
@@ -620,14 +702,16 @@ const storyProgress = () => {
   } else if (isStoryEnabled && isDelayEnabled) {
     isDelayEnabled = false;
   }
-  displayStory(currentChapter, currentPage);
-  console.log(
-    "Story Progress - Current Chapter: " +
-      currentChapter +
-      " Current page: " +
-      currentPage
-  );
-  player.updateStatus();
+  if (isTutorial) {
+    displayStory(currentChapter, currentPage);
+    console.log(
+      "Story Progress - Current Chapter: " +
+        currentChapter +
+        " Current page: " +
+        currentPage
+    );
+    player.updateStatus();
+  }
 };
 
 const startGame = () => {
@@ -679,5 +763,6 @@ const gameNarator = {
   level1: [`Level 1`]
 };
 
-startGame();
-//mainStory();
+//startGame();
+isTutorial = false;
+mainStory();
