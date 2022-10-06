@@ -587,10 +587,14 @@ const generateEncounter = (level) => {
       //   };
       //   currentEncounter.push(treasureBox);
       // }
-      else if (myRand < 6) {
-        let enemyName = "Goblin" + i;
+      else if (myRand < 3) {
+        let enemyName = "Goblin " + i;
         const goblin = new Goblin(enemyName);
         currentEncounter.push(goblin);
+      } else if (myRand < 6) {
+        let enemyName = "Orc " + i;
+        const orc = new Orc(enemyName);
+        currentEncounter.push(orc);
       }
     }
     const levelUp = {
