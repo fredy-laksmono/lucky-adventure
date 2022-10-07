@@ -33,13 +33,13 @@ The game is divided in 4 parts vertically.
 The top part contain your character status.    
 ![status bar](./Assets/StatusBar.png)
 
-The second part will contain the story of the game and also providing your current floor level.   
+The second part contain the story of the game and also providing your current floor level.   
 ![story bar](./Assets/StoryBar.png)
 
-The third part will contain your current scenario. It include path selection and enemy info.   
+The third part contain your current scenario. It include path selection and enemy info.   
 ![path](./Assets/ScenarioBarPath.png) ![enemy](./Assets/ScenarioBarEnemy.png)
 
-The last part will be the battle option where you can select either to attack or buff up your defence.   
+The last part contain the battle option where you can select either to attack or buff up your defence.   
 ![battle](./Assets/BattleOption.png)
 
 ---
