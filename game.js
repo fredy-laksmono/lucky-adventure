@@ -19,6 +19,7 @@ let isStoryEnabled = true;
 let isDelayEnabled = false;
 let isTutorial = true;
 let answer;
+let isUnlimitedRun = true;
 
 let encounter0 = [];
 let encounter1 = [];
@@ -354,7 +355,7 @@ const deadScenario = () => {
   myBattleOptions.forEach((element) => {
     element.remove();
   });
-  gameStory.innerText = "You've dead";
+  gameStory.innerText = "You've dead. Your score is " + player.score;
   let option1 = document.createElement("button");
   option1.classList.add("battle-option");
   option1.innerText = "Retry";
@@ -503,7 +504,7 @@ const clearAndContinue = () => {
 };
 
 const levelUpScenario = () => {
-  console.log("In-LevelUp Scenario");
+  console.log("In-LevelUp Scenario. Level = " + currentLevel);
   const myDiv = document.createElement("div");
   const myInstruction = document.createElement("div");
   myDiv.classList.add("scenario-div");
@@ -568,6 +569,159 @@ const delayNext = () => {
 };
 
 const generateEncounter = (level) => {
+  if (isUnlimitedRun) {
+    // do unlimited
+    const levelUp = {
+      type: "level up",
+      name: "Go up next level"
+    };
+    currentEncounter.push(levelUp);
+    currentEncounter.push(levelUp);
+    if (level < 3) {
+      for (let i = 0; i < 10; i++) {
+        myRand = getRandomInt(6);
+        if (myRand >= 5) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 5) {
+          let enemyName = "Goblin";
+          const goblin = new Goblin(enemyName);
+          currentEncounter.push(goblin);
+        }
+      }
+    } else if (level < 5) {
+      for (let i = 0; i < 16; i++) {
+        myRand = getRandomInt(8);
+        if (myRand >= 7) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 3) {
+          let enemyName = "Goblin ";
+          const goblin = new Goblin(enemyName);
+          currentEncounter.push(goblin);
+        } else if (myRand < 7) {
+          let enemyName = "Orc ";
+          const orc = new Orc(enemyName);
+          currentEncounter.push(orc);
+        }
+      }
+    } else if (level < 8) {
+      for (let i = 0; i < 20; i++) {
+        myRand = getRandomInt(10);
+        if (myRand >= 9) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 3) {
+          let enemyName = "Goblin ";
+          const goblin = new Goblin(enemyName);
+          currentEncounter.push(goblin);
+        } else if (myRand < 7) {
+          let enemyName = "Orc ";
+          const orc = new Orc(enemyName);
+          currentEncounter.push(orc);
+        } else if (myRand < 9) {
+          let enemyName = "Dark Lord Shadow ";
+          const boss = new Boss(enemyName);
+          currentEncounter.push(boss);
+        }
+      }
+    } else if (level < 11) {
+      for (let i = 0; i < 24; i++) {
+        myRand = getRandomInt(10);
+        if (myRand >= 9) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 2) {
+          let enemyName = "Goblin ";
+          const goblin = new Goblin(enemyName);
+          currentEncounter.push(goblin);
+        } else if (myRand < 7) {
+          let enemyName = "Orc ";
+          const orc = new Orc(enemyName);
+          currentEncounter.push(orc);
+        } else if (myRand < 9) {
+          let enemyName = "Dark Lord Shadow ";
+          const boss = new Boss(enemyName);
+          currentEncounter.push(boss);
+        }
+      }
+    } else if (level < 14) {
+      for (let i = 0; i < 28; i++) {
+        myRand = getRandomInt(12);
+        if (myRand >= 11) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 2) {
+          let enemyName = "Goblin ";
+          const goblin = new Goblin(enemyName);
+          currentEncounter.push(goblin);
+        } else if (myRand < 7) {
+          let enemyName = "Orc ";
+          const orc = new Orc(enemyName);
+          currentEncounter.push(orc);
+        } else if (myRand < 11) {
+          let enemyName = "Dark Lord Shadow ";
+          const boss = new Boss(enemyName);
+          currentEncounter.push(boss);
+        }
+      }
+    } else if (level < 17) {
+      for (let i = 0; i < 32; i++) {
+        myRand = getRandomInt(12);
+        if (myRand >= 11) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 4) {
+          let enemyName = "Orc ";
+          const orc = new Orc(enemyName);
+          currentEncounter.push(orc);
+        } else if (myRand < 11) {
+          let enemyName = "Dark Lord Shadow ";
+          const boss = new Boss(enemyName);
+          currentEncounter.push(boss);
+        }
+      }
+    } else if (level > 16) {
+      for (let i = 0; i < 40; i++) {
+        myRand = getRandomInt(12);
+        if (myRand >= 11) {
+          const rest = {
+            type: "rest",
+            name: "Rest"
+          };
+          currentEncounter.push(rest);
+        } else if (myRand < 2) {
+          let enemyName = "Orc ";
+          const orc = new Orc(enemyName);
+          currentEncounter.push(orc);
+        } else if (myRand < 11) {
+          let enemyName = "Dark Lord Shadow ";
+          const boss = new Boss(enemyName);
+          currentEncounter.push(boss);
+        }
+      }
+    }
+
+    return;
+  }
   if (level === 1) {
     for (let i = 0; i < 2; i++) {
       myRand = getRandomInt(6);
@@ -577,18 +731,8 @@ const generateEncounter = (level) => {
           name: "Rest"
         };
         currentEncounter.push(rest);
-      }
-      // else if (myRand === 4) {
-      //   const sword = new Equipment("sword", 2);
-      //   const treasureBox = {
-      //     type: "treasure",
-      //     name: "Treasure Box",
-      //     item: sword
-      //   };
-      //   currentEncounter.push(treasureBox);
-      // }
-      else if (myRand < 5) {
-        let enemyName = "Goblin" + i;
+      } else if (myRand < 5) {
+        let enemyName = "Goblin";
         const goblin = new Goblin(enemyName);
         currentEncounter.push(goblin);
       }
@@ -602,22 +746,12 @@ const generateEncounter = (level) => {
           name: "Rest"
         };
         currentEncounter.push(rest);
-      }
-      // else if (myRand === 4) {
-      //   const sword = new Equipment("sword", 2);
-      //   const treasureBox = {
-      //     type: "treasure",
-      //     name: "Treasure Box",
-      //     item: sword
-      //   };
-      //   currentEncounter.push(treasureBox);
-      // }
-      else if (myRand < 3) {
-        let enemyName = "Goblin " + i;
+      } else if (myRand < 3) {
+        let enemyName = "Goblin ";
         const goblin = new Goblin(enemyName);
         currentEncounter.push(goblin);
       } else if (myRand < 6) {
-        let enemyName = "Orc " + i;
+        let enemyName = "Orc ";
         const orc = new Orc(enemyName);
         currentEncounter.push(orc);
       }
@@ -640,17 +774,7 @@ const generateEncounter = (level) => {
           name: "Rest"
         };
         currentEncounter.push(rest);
-      }
-      // else if (myRand === 4) {
-      //   const sword = new Equipment("sword", 2);
-      //   const treasureBox = {
-      //     type: "treasure",
-      //     name: "Treasure Box",
-      //     item: sword
-      //   };
-      //   currentEncounter.push(treasureBox);
-      // }
-      else if (myRand < 3) {
+      } else if (myRand < 3) {
         let enemyName = "Goblin " + i;
         const goblin = new Goblin(enemyName);
         currentEncounter.push(goblin);
@@ -670,17 +794,32 @@ const generateEncounter = (level) => {
 };
 
 const advance = () => {
+  console.log("In Advance, current encounter = ", currentEncounter);
   currentEncounterOption = [];
   gameWrapper.removeEventListener("click", advance);
-  if (currentLevel === 3 && currentEncounter.length === 0) {
+  if (
+    currentLevel === 3 &&
+    currentEncounter.length === 0 &&
+    isUnlimitedRun === false
+  ) {
     winScenario();
     return;
   } else if (currentEncounter.length === 0) {
+    console.log(
+      "CurrentEncounter is empty, level up. Before level up level = " +
+        currentLevel
+    );
     currentLevel++;
+    console.log("After level up, level = " + currentLevel);
+    gameStory.innerText = "Level " + currentLevel;
     generateEncounter(currentLevel);
     player.AddMaxHP(50);
     player.addScore(50 * currentLevel);
-    player.updateStatus;
+    player.updateStatus();
+    console.log(
+      "player update status after level up. Player current health = " +
+        player.health
+    );
   }
   currentEncounterOption.push(currentEncounter.pop());
   currentEncounterOption.push(currentEncounter.pop());
@@ -901,7 +1040,7 @@ const gameNarator = {
     "FL: I’m FL and may I know who is our brave soul name here?"
   ],
   1: [
-    `FL: Thank you ${player.name} for coming, as the voice in your head mentioned, we are in dire need for a brave adventure to help us defeat the dark lord in this world.`,
+    `FL: Thank you for coming, as the voice in your head mentioned, we are in dire need for a brave adventure to help us defeat the dark lord in this world.`,
     "FL: In order to reach the Dark lord, you need to venture into dark lord castle. I can guide you to the castle door. Let's go!",
     "FL: There is a single goblin sleeping. We need to fight him in order to reach the castle. Quickly, click the Attack button!"
   ],
@@ -914,8 +1053,8 @@ const gameNarator = {
     `FL: Unfortunately, I happened to shop some basic equipment a moment ago.`,
     `FL: Here, wear this armor!`,
     `FL: And take this basic shield and equip it. Click the shield button.`,
-    `FL: Your armor has increased and equipment can only be used one time per battle. But the effect last until the battle end.`,
-    `FL: Here, take this basic sword and let's equip the sword to increase our damage. Click the sword button.`,
+    `FL: Your armor has increased and everytime you get hit, your armor decreased.`,
+    `FL: Here, take this basic sword! It doesn't really increase anything. It just for the storyline sake that you have a sword to fight with (:  Click the sword button!`,
     `FL: As you can see, we already took 2 hit but it is barely reducing your health. Now keep attacking the goblin.`
   ],
   3: [
@@ -925,7 +1064,7 @@ const gameNarator = {
     `FL: Beyond this gate, you will face many challenges. You will be on your own.`,
     `FL: You will find the dark lord at the top of the castle.`,
     `FL: I sincerely wish you good luck.`,
-    `FL: System: You've entered the first floor of the castle.`
+    `System: You've entered the first floor of the castle.`
   ],
   level1: [`Level 1`]
 };
