@@ -2,6 +2,7 @@ body {
     margin: 0;
 }
 
+
 #main-wrapper,#game-wrapper {
     display: grid;
     justify-content: center;
@@ -25,7 +26,7 @@ body {
 }
 
 #game-option-frame{
-    grid-column: 2;
+    grid-column: 2/span 2;
 }
 
 #status-bar-frame{
@@ -40,4 +41,28 @@ body {
 
 .name-frame{
     grid-column: 1/4;
+}
+
+#game-scenario-frame, #game-story-frame{
+  padding: 10px;
+}
+
+#game-option-frame{
+    display: flex;
+    padding: 20px;
+    gap: 10px;
+}
+
+.battle-option{
+    margin: 2px;
+}
+
+nav{
+    display: flex;
+    justify-content: center;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
 }

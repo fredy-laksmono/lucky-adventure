@@ -13,13 +13,21 @@ const gameScenario = document.querySelector("#game-scenario");
 // let option3 = document.querySelector("#option-3");
 // let option4 = document.querySelector("#option-4");
 // let option5 = document.querySelector("#option-5");
+let gameMode = location.search.substring(1);
 let currentTarget;
 let currentScenario;
 let isStoryEnabled = true;
 let isDelayEnabled = false;
 let isTutorial = true;
 let answer;
-let isUnlimitedRun = true;
+let isUnlimitedRun = false;
+if (gameMode === "single") {
+  isUnlimitedRun = false;
+} else if (gameMode === "endless") {
+  isUnlimitedRun = true;
+} else {
+  console.log("Error: Unexpected Mode");
+}
 
 let encounter0 = [];
 let encounter1 = [];
@@ -723,7 +731,7 @@ const generateEncounter = (level) => {
     return;
   }
   if (level === 1) {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 10; i++) {
       myRand = getRandomInt(6);
       if (myRand >= 5) {
         const rest = {
@@ -738,7 +746,7 @@ const generateEncounter = (level) => {
       }
     }
   } else if (level === 2) {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 16; i++) {
       myRand = getRandomInt(7);
       if (myRand >= 6) {
         const rest = {
@@ -766,7 +774,7 @@ const generateEncounter = (level) => {
     const darkLord = new Boss("Dark Lord");
     currentEncounter.push(darkLord);
     currentEncounter.push(darkLord);
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 20; i++) {
       myRand = getRandomInt(8);
       if (myRand >= 7) {
         const rest = {
