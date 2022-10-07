@@ -8,11 +8,7 @@ const gameStory = document.querySelector("#game-story");
 const gameOption = document.querySelector("#game-option-frame");
 const gameWrapper = document.querySelector("#game-wrapper");
 const gameScenario = document.querySelector("#game-scenario");
-// let option1 = document.querySelector("#option-1");
-// let option2 = document.querySelector("#option-2");
-// let option3 = document.querySelector("#option-3");
-// let option4 = document.querySelector("#option-4");
-// let option5 = document.querySelector("#option-5");
+
 let gameMode = location.search.substring(1);
 let currentTarget;
 let currentScenario;
@@ -29,15 +25,9 @@ if (gameMode === "single") {
   console.log("Error: Unexpected Mode");
 }
 
-let encounter0 = [];
-let encounter1 = [];
-let encounter2 = [];
-let encounter3 = [];
-
 let currentChapter = 0;
 let currentPage = 0;
 let currentDisplayActive = false;
-
 let currentEncounter = [];
 let currentEncounterOption = [];
 let currentLevel = 1;
@@ -49,6 +39,9 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max) + 1;
 }
 
+/*****
+ This class equipment is part of future update. Currently not used in game.
+ */
 class Equipment {
   constructor(type, modifier) {
     this.type = type;
@@ -187,15 +180,12 @@ class Player extends Character {
     }
   }
   battle(enemy) {
-    console.log(`Before battle: `, enemy);
     enemy.reduceHP(this.damage);
     if (isTutorial) {
       if (enemy.isDead) {
       } else {
-        console.log("Enemy counter attack");
         enemy.battle(this);
       }
-      console.log(`After battle: `, enemy);
     }
   }
   updateStatus() {
@@ -260,9 +250,7 @@ class Goblin extends Enemy {
   }
 
   battle(player) {
-    console.log("Goblin initiate attack");
     player.reduceHP(this.damage);
-    console.log("Goblin attack for " + this.damage);
     player.updateStatus();
   }
 }
@@ -342,7 +330,6 @@ const displayStory = (chapter, page) => {
 };
 
 const winScenario = () => {
-  console.log("Win Scenario Triggered");
   currentLevel = 1;
   clean("all");
   gameStory.innerText = "Congratulation, you've defeated the Dark Lord.";
@@ -415,9 +402,7 @@ const disableBattle = () => {
 };
 
 const displayScenario = (type, object) => {
-  console.log("displayScenario Triggered");
   if (type === "enemy" && currentDisplayActive === false) {
-    console.log("New Display");
     const myDiv = document.createElement("div");
     const nameFrame = document.createElement("div");
     const healthFrame = document.createElement("div");
@@ -445,7 +430,6 @@ const displayScenario = (type, object) => {
       enemy: object
     };
   } else if (type === "path" && currentDisplayActive === false) {
-    console.log("New Display");
     const myDiv = document.createElement("div");
     const myInstruction = document.createElement("div");
     myInstruction.innerText = "<Select your path>";
@@ -491,7 +475,6 @@ const displayScenario = (type, object) => {
   } else if (type === "rest") {
     restScenario();
   } else if (type === "treasure") {
-    console.log("Treasure triggered");
     const myDiv = document.createElement("div");
     const myInstruction = document.createElement("div");
     myDiv.classList.add("scenario-div");
@@ -505,14 +488,12 @@ const displayScenario = (type, object) => {
 };
 
 const clearAndContinue = () => {
-  console.log("clearing scenario in clear and continue");
   clearScenario();
   gameWrapper.removeEventListener("click", clearAndContinue);
   gameWrapper.addEventListener("click", advance);
 };
 
 const levelUpScenario = () => {
-  console.log("In-LevelUp Scenario. Level = " + currentLevel);
   const myDiv = document.createElement("div");
   const myInstruction = document.createElement("div");
   myDiv.classList.add("scenario-div");
@@ -530,7 +511,6 @@ const levelUpScenario = () => {
 };
 
 const restScenario = () => {
-  console.log("In-Rest Scenario");
   const myDiv = document.createElement("div");
   const myInstruction = document.createElement("div");
   myDiv.classList.add("scenario-div");
@@ -547,8 +527,6 @@ const restScenario = () => {
   };
 };
 const updateEnemy = (enemy) => {
-  // let myHealth = currentScenario.healthData;
-  // let myArmor = currentScenario.armorData;
   let myHealth = document.querySelector(".health-frame");
   let myArmor = document.querySelector(".armor-frame");
   myHealth.innerText = `HP: ${enemy.health}`;
@@ -558,13 +536,8 @@ const updateEnemy = (enemy) => {
 const clearScenario = () => {
   const myDiv = document.querySelector(".scenario-div");
   myDiv.remove();
-  //currentScenario.master.remove();
   currentDisplayActive = false;
 };
-// Delete if not used
-// const attack = () => {
-//   player.battle(currentTarget);
-// };
 
 const continueStory = () => {
   storyProgress();
@@ -578,7 +551,6 @@ const delayNext = () => {
 
 const generateEncounter = (level) => {
   if (isUnlimitedRun) {
-    // do unlimited
     const levelUp = {
       type: "level up",
       name: "Go up next level"
@@ -802,7 +774,6 @@ const generateEncounter = (level) => {
 };
 
 const advance = () => {
-  console.log("In Advance, current encounter = ", currentEncounter);
   currentEncounterOption = [];
   gameWrapper.removeEventListener("click", advance);
   if (
@@ -813,25 +784,15 @@ const advance = () => {
     winScenario();
     return;
   } else if (currentEncounter.length === 0) {
-    console.log(
-      "CurrentEncounter is empty, level up. Before level up level = " +
-        currentLevel
-    );
     currentLevel++;
-    console.log("After level up, level = " + currentLevel);
     gameStory.innerText = "Level " + currentLevel;
     generateEncounter(currentLevel);
     player.AddMaxHP(50);
     player.addScore(50 * currentLevel);
     player.updateStatus();
-    console.log(
-      "player update status after level up. Player current health = " +
-        player.health
-    );
   }
   currentEncounterOption.push(currentEncounter.pop());
   currentEncounterOption.push(currentEncounter.pop());
-  console.log("Scenario to be shown: ", currentEncounterOption);
   currentScenario = displayScenario("path", currentEncounterOption);
 };
 
@@ -862,22 +823,18 @@ const clean = (target) => {
 };
 
 const mainStory = () => {
-  console.log("Start of MainStory");
   clean("all");
   player.reset();
   player.updateStatus();
   generateEncounter(1);
   displayStory("level1", 0);
-  console.log(currentEncounter);
   gameWrapper.addEventListener("click", advance);
 };
 
 const storyProgress = () => {
-  console.log("storyProgress triggered");
   displayStory(currentChapter, currentPage);
   if (currentChapter === 0) {
     if (currentPage < gameNarator[currentChapter].length - 1) {
-      //   currentPage++;
     } else {
       currentPage = -1;
       currentChapter++;
@@ -885,7 +842,6 @@ const storyProgress = () => {
       answer = reConfirm(answer, "Please enter your name: ", "Is your name: ");
       player.name = answer;
       player.updateStatus();
-      console.log(player.name);
       answer = prompt("Skip tutorial? (Yes/No)");
       if (answer == "Yes") {
         isTutorial = false;
@@ -896,13 +852,11 @@ const storyProgress = () => {
     }
   } else if (currentChapter === 1 && isTutorial) {
     if (currentPage < gameNarator[currentChapter].length - 1) {
-      //   currentPage++;
     } else {
       gameWrapper.removeEventListener("click", storyProgress);
       isStoryEnabled = false;
       currentTarget = goblinInTraining1;
       currentScenario = displayScenario("enemy", goblinInTraining1);
-      console.log("currentScenario = ", currentScenario);
       let option1 = document.createElement("button");
       option1.innerText = "Attack";
       option1.addEventListener("click", () => {
@@ -912,15 +866,8 @@ const storyProgress = () => {
           gameWrapper.addEventListener("click", continueStory);
           isStoryEnabled = true;
           option1.remove();
-          console.log("Current Page before reset: " + currentPage);
           currentPage = 0;
           currentChapter++;
-          console.log(
-            "Current Chapter: " +
-              currentChapter +
-              " Current page: " +
-              currentPage
-          );
         }
       });
       gameOption.appendChild(option1);
@@ -928,9 +875,7 @@ const storyProgress = () => {
   } else if (currentChapter === 2 && isTutorial) {
     if (currentPage === 2) {
       clearScenario();
-      //   currentPage++;
     } else if (currentPage === 6) {
-      //   currentPage++;
       player.addArmor(4);
       player.updateStatus();
     } else if (currentPage === 7) {
@@ -976,15 +921,8 @@ const storyProgress = () => {
         updateEnemy(goblinInTraining2);
         option1.remove();
         if (goblinInTraining2.isDead) {
-          console.log("Current Page before reset: " + currentPage);
           currentPage = 0;
           currentChapter++;
-          console.log(
-            "Current Chapter: " +
-              currentChapter +
-              " Current page: " +
-              currentPage
-          );
           displayStory(currentChapter, currentPage);
           gameWrapper.addEventListener("click", continueStory);
           isStoryEnabled = true;
@@ -994,16 +932,13 @@ const storyProgress = () => {
       });
       gameOption.appendChild(option1);
     } else if (currentPage < gameNarator[currentChapter].length - 1) {
-      //   currentPage++;
     } else {
     }
   } else if (currentChapter === 3 && isTutorial) {
     if (currentPage === 2) {
-      //   currentPage++;
       clearScenario();
       player.rest();
     } else if (currentPage < gameNarator[currentChapter].length - 1) {
-      // currentPage++;
     } else {
       isTutorial = false;
       gameWrapper.removeEventListener("click", continueStory);
@@ -1012,18 +947,11 @@ const storyProgress = () => {
   }
   if (isStoryEnabled && isDelayEnabled === false) {
     currentPage++;
-    console.log("Story increase by one, " + currentPage);
   } else if (isStoryEnabled && isDelayEnabled) {
     isDelayEnabled = false;
   }
   if (isTutorial) {
     displayStory(currentChapter, currentPage);
-    console.log(
-      "Story Progress - Current Chapter: " +
-        currentChapter +
-        " Current page: " +
-        currentPage
-    );
     player.updateStatus();
   }
 };
