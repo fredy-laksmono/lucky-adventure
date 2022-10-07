@@ -32,6 +32,9 @@ let currentEncounter = [];
 let currentEncounterOption = [];
 let currentLevel = 1;
 
+const backgroundSong = document.querySelector("#background-song");
+backgroundSong.volume = 0.05;
+
 /***
  * Function
  */
