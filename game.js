@@ -194,6 +194,16 @@ class Player extends Character {
     currentArmor.innerText = this.armor;
     currentGold.innerText = this.money;
   }
+  reset() {
+    this.health = 50;
+    this.maxHealth = 50;
+    this.armor = 0;
+    this.damage = 20;
+    this.baseDamage = 20;
+    this.baseArmor = 4;
+    this.isDead = false;
+    this.money = 0;
+  }
 }
 
 class Enemy extends Character {
@@ -320,6 +330,21 @@ const reConfirm = (myAnswer, myString, sentence) => {
 
 const displayStory = (chapter, page) => {
   gameStory.innerText = gameNarator[chapter][page];
+};
+
+const winScenario = () => {
+  console.log("Win Scenario Triggered");
+  currentLevel = 1;
+  clean("all");
+  gameStory.innerText = "Congratulation, you've defeated the Dark Lord.";
+  let option1 = document.createElement("button");
+  option1.classList.add("battle-option");
+  option1.innerText = "Re-play";
+  option1.addEventListener("click", (e) => {
+    mainStory();
+    e.stopPropagation();
+  });
+  gameOption.appendChild(option1);
 };
 
 const deadScenario = () => {
@@ -544,7 +569,7 @@ const delayNext = () => {
 
 const generateEncounter = (level) => {
   if (level === 1) {
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 2; i++) {
       myRand = getRandomInt(6);
       if (myRand >= 5) {
         const rest = {
@@ -569,7 +594,7 @@ const generateEncounter = (level) => {
       }
     }
   } else if (level === 2) {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 2; i++) {
       myRand = getRandomInt(7);
       if (myRand >= 6) {
         const rest = {
@@ -603,18 +628,58 @@ const generateEncounter = (level) => {
     };
     currentEncounter.push(levelUp);
     currentEncounter.push(levelUp);
+  } else if (level === 3) {
+    const darkLord = new Boss("Dark Lord");
+    currentEncounter.push(darkLord);
+    currentEncounter.push(darkLord);
+    for (let i = 0; i < 2; i++) {
+      myRand = getRandomInt(8);
+      if (myRand >= 7) {
+        const rest = {
+          type: "rest",
+          name: "Rest"
+        };
+        currentEncounter.push(rest);
+      }
+      // else if (myRand === 4) {
+      //   const sword = new Equipment("sword", 2);
+      //   const treasureBox = {
+      //     type: "treasure",
+      //     name: "Treasure Box",
+      //     item: sword
+      //   };
+      //   currentEncounter.push(treasureBox);
+      // }
+      else if (myRand < 3) {
+        let enemyName = "Goblin " + i;
+        const goblin = new Goblin(enemyName);
+        currentEncounter.push(goblin);
+      } else if (myRand < 7) {
+        let enemyName = "Orc " + i;
+        const orc = new Orc(enemyName);
+        currentEncounter.push(orc);
+      }
+    }
+    const levelUp = {
+      type: "level up",
+      name: "Go up next level"
+    };
+    currentEncounter.push(levelUp);
+    currentEncounter.push(levelUp);
   }
 };
 
 const advance = () => {
   currentEncounterOption = [];
   gameWrapper.removeEventListener("click", advance);
-  if (currentEncounter.length === 0) {
+  if (currentLevel === 3 && currentEncounter.length === 0) {
+    winScenario();
+    return;
+  } else if (currentEncounter.length === 0) {
     currentLevel++;
     generateEncounter(currentLevel);
     player.AddMaxHP(50);
     player.addMoney(50 * currentLevel);
-    player.rest();
     player.updateStatus;
   }
   currentEncounterOption.push(currentEncounter.pop());
@@ -623,9 +688,36 @@ const advance = () => {
   currentScenario = displayScenario("path", currentEncounterOption);
 };
 
+const clean = (target) => {
+  if (target === "all") {
+    gameStory.innerText = "";
+    let myScenario = document.querySelector(".scenario-div");
+    if (myScenario) {
+      myScenario.remove();
+    }
+    let myOption = document.querySelectorAll(".battle-option");
+    for (let i = 0; i < myOption.length; i++) {
+      myOption[i].remove();
+    }
+  } else if (target === "story") {
+    gameStory.innerText = "";
+  } else if (target === "scenario") {
+    let myScenario = document.querySelector(".scenario-div");
+    if (myScenario) {
+      myScenario.remove();
+    }
+  } else if (target === "option") {
+    let myOption = document.querySelectors(".battle-option");
+    for (let i = 0; i < myOption.length; i++) {
+      myOption[i].remove();
+    }
+  }
+};
+
 const mainStory = () => {
-  console.log(currentEncounter);
-  player.rest();
+  console.log("Start of MainStory");
+  clean("all");
+  player.reset();
   player.updateStatus();
   generateEncounter(1);
   displayStory("level1", 0);
@@ -767,6 +859,8 @@ const storyProgress = () => {
       // currentPage++;
     } else {
       isTutorial = false;
+      gameWrapper.removeEventListener("click", continueStory);
+      mainStory();
     }
   }
   if (isStoryEnabled && isDelayEnabled === false) {
@@ -836,6 +930,4 @@ const gameNarator = {
   level1: [`Level 1`]
 };
 
-//startGame();
-isTutorial = false;
-mainStory();
+startGame();
