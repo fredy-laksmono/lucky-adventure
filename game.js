@@ -685,7 +685,7 @@ const generateEncounter = (level) => {
     } else if (level > 16) {
       for (let i = 0; i < 40; i++) {
         myRand = getRandomInt(12);
-        if (myRand >= 11) {
+        if (myRand >= 12) {
           const rest = {
             type: "rest",
             name: "Rest"
@@ -695,7 +695,7 @@ const generateEncounter = (level) => {
           let enemyName = "Orc ";
           const orc = new Orc(enemyName);
           currentEncounter.push(orc);
-        } else if (myRand < 11) {
+        } else if (myRand < 12) {
           let enemyName = "Dark Lord Shadow ";
           const boss = new Boss(enemyName);
           currentEncounter.push(boss);
