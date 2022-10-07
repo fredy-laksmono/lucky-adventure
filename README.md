@@ -5,7 +5,7 @@ Welcome to my first RPG game. Hope you enjoy it. (:
 
 ![GameTitle](./Assets/GameTitle.png)
 
-This is a simple rougelike rpg game where the goal is to get the highest score.
+This is a simple rougelike rpg game where the goal is to get the highest score or highest level.
 
 There are two modes in this game.
 Story Mode & Endless Mode
@@ -14,14 +14,14 @@ You will face multiple randomly generated enemies and for each enemy defeated an
 
 If you are in story mode, when you reach the end of story, you will face a Dark Lord which require correct planning and "luck" on your journey to have a chance to defeat it.
 
-Once you are comfortable with the game gameplay, feel free to challenge the endless mode. This is the core game. Go get the highest score you can get. 
+Once you are comfortable with the game gameplay, feel free to challenge the endless mode. This is the core game. Go get the highest score you can get. Or you can try to wiggle your way to reach the highest level in endless mode.
 
 Good luck adventurer! You will need it.
 
 ---
 
 ## How to play
-You can access the game at [here](http://fl-lucky-adventure.surge.sh/).
+You can access the game [here](http://fl-lucky-adventure.surge.sh/).
 
 The game will teach you how to play. You also have option to skip tutorial if you already play it before.
 
