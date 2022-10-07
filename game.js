@@ -3,7 +3,7 @@
  */
 const healthBar = document.querySelector("#hp-bar");
 const currentArmor = document.querySelector("#armor");
-const currentGold = document.querySelector("#gold");
+const currentScore = document.querySelector("#score");
 const gameStory = document.querySelector("#game-story");
 const gameOption = document.querySelector("#game-option-frame");
 const gameWrapper = document.querySelector("#game-wrapper");
@@ -86,7 +86,7 @@ class Character {
     this.maxHealth = 10;
     this.armor = 0;
     this.maxArmor = 9;
-    this.money = 0;
+    this.score = 0;
     this.equipments = [];
     this.isDead = false;
   }
@@ -160,14 +160,14 @@ class Player extends Character {
       }
     }
   }
-  addMoney(value) {
-    this.money += value;
+  addScore(value) {
+    this.score += value;
   }
-  removeMoney(value) {
-    if (this.money < value) {
+  removeScore(value) {
+    if (this.score < value) {
       return false;
     } else {
-      this.money -= value;
+      this.score -= value;
       return true;
     }
   }
@@ -192,35 +192,35 @@ class Player extends Character {
   updateStatus() {
     healthBar.innerText = this.health;
     currentArmor.innerText = this.armor;
-    currentGold.innerText = this.money;
+    currentScore.innerText = this.score;
   }
   reset() {
     this.health = 50;
     this.maxHealth = 50;
-    this.armor = 0;
+    this.armor = 4;
     this.damage = 20;
     this.baseDamage = 20;
     this.baseArmor = 4;
     this.isDead = false;
-    this.money = 0;
+    this.score = 0;
   }
 }
 
 class Enemy extends Character {
-  constructor(name, health, armor, money, equipments) {
+  constructor(name, health, armor, score, equipments) {
     super((name = name));
     this.health = health;
     this.maxHealth = health;
     this.armor = armor;
-    this.money = money;
+    this.score = score;
     this.equipments = equipments;
     this.damage = 10;
     this.type = "enemy";
   }
 
-  giveMoney(player) {
-    player.addMoney(this.money);
-    this.money = 0;
+  giveScore(player) {
+    player.addScore(this.score);
+    this.score = 0;
     player.updateStatus();
   }
 
@@ -235,7 +235,7 @@ class Goblin extends Enemy {
     super(name);
     this.health = 30;
     this.armor = 0;
-    this.money = 75;
+    this.score = 75;
     this.equipments = equipments;
     let modifier = getRandomInt(3);
     if (modifier < 3) {
@@ -263,7 +263,7 @@ class Orc extends Enemy {
     super(name);
     this.health = 70;
     this.armor = 2;
-    this.money = 140;
+    this.score = 140;
     this.equipments = equipments;
     let modifier = getRandomInt(2);
     if (modifier < 2) {
@@ -290,7 +290,7 @@ class Boss extends Enemy {
     super(name);
     this.health = 200;
     this.armor = 4;
-    this.money = 0;
+    this.score = 0;
     this.equipments = equipments;
     let modifier = getRandomInt(3);
     if (modifier < 3) {
@@ -373,7 +373,7 @@ const enableBattle = (enemy) => {
     player.updateStatus();
     player.battle(enemy);
     if (enemy.isDead) {
-      enemy.giveMoney(player);
+      enemy.giveScore(player);
       disableBattle();
     } else {
       enemy.battle(player);
@@ -679,7 +679,7 @@ const advance = () => {
     currentLevel++;
     generateEncounter(currentLevel);
     player.AddMaxHP(50);
-    player.addMoney(50 * currentLevel);
+    player.addScore(50 * currentLevel);
     player.updateStatus;
   }
   currentEncounterOption.push(currentEncounter.pop());
